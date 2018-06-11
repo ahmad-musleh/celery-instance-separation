@@ -1,0 +1,25 @@
+version: '3'
+services:
+  celery_producer:
+    build:
+      context: ./celery_tasks
+      dockerfile: ./Dockerfile
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    command:
+      - python
+      - produce_tasks.py
+    depends_on:
+      - redis
+  celery_consumer:
+    build:
+      context: ./celery_tasks
+      dockerfile: ./Dockerfile
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - CELERY_RESULT_BACKEND=redis://redis:6379
+    depends_on:
+      - redis
+  redis:
+    image: redis
